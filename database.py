@@ -17,11 +17,6 @@ def create_table():
             rating FLOAT,
             price VARCHAR(225))
         """,
-        # """
-        # CREATE TABLE category (
-        #     id SERIAL PRIMARY KEY,
-        #     name VARCHAR(225) NOT NULL UNIQUE)
-        # """,
         """
         CREATE TABLE category (
             id SERIAL PRIMARY KEY,
@@ -77,22 +72,7 @@ def insert_restaurant(cur, obj):
         RETURNING id;
     """
     cur.execute(command, (obj['name'], obj['aggregateRating']['ratingValue'], obj['priceRange']))
-    return cur.fetchone()[0]
-
-# def insert_category(cur, file_category, obj):
-#     command = """
-#         INSERT INTO category(name)
-#         VALUES (%s);
-#     """
-#     category = obj['categories']
-#     for i in category:
-#         category = str(i)      
-#         if file_category is not None:
-#             cur.execute(command, (category,))
-#         else:
-#             cur.execute(command, (file_category,))
-#             file_category = None
-            
+    return cur.fetchone()[0]           
 
 def insert_review(cur, restaurant_id, obj):
     command = """
@@ -145,7 +125,6 @@ def insert_table():
                     conn = psycopg2.connect(**param)
                     cur = conn.cursor()
                     restaurant_id = insert_restaurant(cur,obj)
-                    # insert_category(cur, file_category, obj)
                     insert_review(cur, restaurant_id, obj)
                     insert_category(cur, restaurant_id, file_category, obj)
                     insert_known_for(cur, restaurant_id, obj)
@@ -164,7 +143,6 @@ def drop_table():
         param = config()
         conn = psycopg2.connect(**param)
         cur = conn.cursor()
-        # cur.execute("DROP TABLE category_rel")
         cur.execute("DROP TABLE category")
         cur.execute("DROP TABLE known_for")
         cur.execute("DROP TABLE review")
